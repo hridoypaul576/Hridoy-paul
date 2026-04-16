@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Madipaul Pro | অরিজিনাল মেডিসিন অ্যাপ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #e8f3ec;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        :root {
+            --primary: #0d6b2e;
+            --primary-dark: #0a5224;
+            --primary-light: #4caf50;
+            --primary-soft: #e8f5e9;
+            --accent: #ff9800;
+            --discount: #e53935;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --text-dark: #1a2e1a;
+            --text-muted: #5a6e5a;
+            --border: #d4e6d4;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        /* নেভিগেশন বার - Arogga স্টাইল */
+        .bottom-nav {
+            background: var(--white);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 16px 20px;
+            border-top: 1px solid var(--border);
+            z-index: 100;
+            background: rgba(255,255,255,0.96);
+        }
+        .nav-btn {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 30px;
+            background: none;
+            border: none;
+        }
+        .nav-btn.active { color: var(--primary); background: var(--primary-soft); font-weight: 600; }
+        .nav-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+        .page { display: none; padding: 16px 16px 80px; max-width: 540px; margin: 0 auto; }
+        .page.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ব্যানার - Arogga স্টাইল */
+        .banner {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 28px;
+            padding: 22px 20px;
+            color: white;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .discount-badge {
+            background: var(--discount);
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* অ্যাড ব্যানার */
+        .ad-banner {
+            background: #f0f0f0;
+            border-radius: 20px;
+            padding: 12px;
+            text-align: center;
+            margin: 16px 0;
+            font-size: 12px;
+            color: #888;
+            border: 1px dashed #ccc;
+            cursor: pointer;
+        }
+        .ad-banner img { max-width: 100%; border-radius: 16px; }
+
+        /* স্ট্যাটাস কার্ড */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+        .stat-card { background: var(--card-bg); border-radius: 16px; padding: 10px 5px; text-align: center; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .stat-number { font-size: 18px; font-weight: 800; color: var(--primary); }
+        .stat-label { font-size: 10px; color: var(--text-muted); }
+
+        /* ক্যাটাগরি */
+        .scroll-x { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 16px; }
+        .cat-chip { background: var(--card-bg); padding: 10px 22px; border-radius: 40px; border: 1px solid var(--border); white-space: nowrap; cursor: pointer; font-size: 13px; }
+        .cat-chip.active { background: var(--primary); color: white; }
+
+        /* মেডিসিন কার্ড - ছবি সহ */
+        .medicine-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .medicine-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            background: var(--primary-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .medicine-img img { width: 100%; height: 100%; object-fit: cover; }
+        .medicine-img span { font-size: 32px; }
+        .discount-tag {
+            position: absolute;
+            top: -8px;
+            left: 10px;
+            background: var(--discount);
+            color: white;
+            font-size: 10px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .med-info { flex: 1; }
+        .med-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .med-detail { font-size: 11px; color: var(--text-muted); }
+        .badge-group { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+        .rx-badge { background: #ffebee; color: #e53935; font-size: 9px; padding: 2px 8px; border-radius: 20px; }
+        .essential-badge { background: #e3f2fd; color: #1565c0; font-size: 9px; padding: 2px 8px; border-radius: 20px; }
+        .price-section { text-align: right; min-width: 85px; }
+        .original-price { font-size: 11px; color: var(--text-muted); text-decoration: line-through; }
+        .discount-price { color: var(--discount); font-weight: 800; font-size: 1.1rem; }
+        .save-amount { font-size: 9px; color: var(--primary); }
+        .add-btn { background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 6px; font-size: 12px; width: 100%; }
+
+        /* হেল্প ফ্যাব */
+        .help-fab {
+            position: fixed;
+            bottom: 90px;
+            right: 16px;
+            width: 52px;
+            height: 52px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 150;
+        }
+        .help-chat {
+            position: fixed;
+            bottom: 160px;
+            right: 16px;
+            width: 320px;
+            max-width: calc(100vw - 32px);
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            z-index: 151;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .help-header { background: var(--primary); color: white; padding: 12px 16px; display: flex; justify-content: space-between; }
+        .help-messages { height: 280px; overflow-y: auto; padding: 12px; background: #f5f5f5; }
+        .message { margin-bottom: 10px; display: flex; }
+        .message.bot { justify-content: flex-start; }
+        .message.user { justify-content: flex-end; }
+        .message-bubble { max-width: 80%; padding: 8px 12px; border-radius: 16px; font-size: 12px; }
+        .message.bot .message-bubble { background: white; border: 1px solid var(--border); }
+        .message.user .message-bubble { background: var(--primary); color: white; }
+        .help-input-area { display: flex; padding: 10px; border-top: 1px solid var(--border); background: white; }
+        .help-input { flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 30px; font-size: 12px; }
+        .help-send { background: var(--primary); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; margin-left: 8px; cursor: pointer; }
+        .quick-replies { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: #f9f9f9; }
+        .quick-reply { background: var(--primary-soft); padding: 5px 10px; border-radius: 30px; font-size: 10px; cursor: pointer; }
+
+        /* কার্ট, চেকআউট, প্রোফাইল */
+        .cart-item { background: var(--card-bg); padding: 12px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .delivery-box { background: var(--primary-soft); padding: 14px; border-radius: 20px; margin: 14px 0; }
+        input, select { width: 100%; padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin: 8px 0; font-size: 14px; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; padding: 12px; border-radius: 44px; font-size: 16px; font-weight: bold; border: none; margin-top: 14px; cursor: pointer; }
+        .order-card { background: var(--card-bg); border-radius: 20px; padding: 14px; margin-bottom: 12px; border-left: 5px solid var(--primary); }
+        .profile-header { background: var(--card-bg); border-radius: 28px; padding: 24px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border); }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--primary-soft); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border: 3px solid var(--primary); }
+        .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--card-bg); border-radius: 20px; margin-bottom: 10px; border: 1px solid var(--border); cursor: pointer; }
+
+        @media (max-width: 480px) {
+            .medicine-card { flex-direction: column; align-items: flex-start; }
+            .medicine-img { width: 100%; height: 120px; margin-bottom: 8px; }
+            .price-section { text-align: left; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- হেল্প চ্যাট -->
+<div class="help-fab" id="helpFab">💬</div>
+<div class="help-chat" id="helpChat">
+    <div class="help-header"><span>🤖 Madipaul সহায়তা কেন্দ্র</span><button id="closeHelp" style="background:none; border:none; color:white; font-size:18px; cursor:pointer;">✕</button></div>
+    <div class="help-messages" id="helpMessages"><div class="message bot"><div class="message-bubble">👋 সালাম! আমি Madipaul AI সহায়ক।<br>বাংলাদেশের সব ধরনের ওষুধ এখানে আছে!<br>আপনার যেকোনো প্রশ্ন করতে পারেন।</div></div></div>
+    <div class="quick-replies">
+        <div class="quick-reply" data-question="ওষুধের দাম">💊 দাম</div>
+        <div class="quick-reply" data-question="ডেলিভারি চার্জ">🚚 ডেলিভারি</div>
+        <div class="quick-reply" data-question="ডিসকাউন্ট">🎉 ছাড়</div>
+        <div class="quick-reply" data-question="অর্ডার পদ্ধতি">📦 অর্ডার</div>
+    </div>
+    <div class="help-input-area">
+        <input type="text" class="help-input" id="helpInput" placeholder="আপনার প্রশ্ন লিখুন...">
+        <button class="help-send" id="helpSend">➤</button>
+    </div>
+</div>
+
+<!-- পেজসমূহ -->
+<div id="home" class="page">
+    <div class="banner">
+        <h1>💚 Madipaul Pro</h1>
+        <p>বাংলাদেশের সব ধরনের ওষুধ একই জায়গায়</p>
+        <div class="discount-badge">🎉 সব প্রোডাক্টে ১০% ছাড়!</div>
+    </div>
+
+    <!-- অ্যাড ব্যানার 1 (কাস্টম/গুগল অ্যাডসেন্স) -->
+    <div class="ad-banner" id="adBannerTop">
+        <span>📢 আপনার বিজ্ঞাপন এখানে দিন | যোগাযোগ: madipaul@example.com</span>
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-number" id="statTotal">--</div><div class="stat-label">মোট ওষুধ</div></div>
+        <div class="stat-card"><div class="stat-number" id="statGeneric">--</div><div class="stat-label">জেনেরিক</div></div>
+        <div class="stat-card"><div class="stat-number" id="statBrand">--</div><div class="stat-label">ব্র্যান্ড</div></div>
+        <div class="stat-card"><div class="stat-number" id="statCat">--</div><div class="stat-label">ক্যাটাগরি</div></div>
+    </div>
+    
+    <h3>📂 ওষুধের ক্যাটাগরি</h3>
+    <div class="scroll-x" id="homeCats"></div>
+    
+    <h3>⭐ জনপ্রিয় ওষুধ</h3>
+    <div id="popularGrid"></div>
+
+    <!-- অ্যাড ব্যানার 2 -->
+    <div class="ad-banner" id="adBannerBottom">
+        <span>📢 স্পনসরড কন্টেন্ট | আপনার ব্র্যান্ড এখানে</span>
+    </div>
+</div>
+
+<div id="medicines" class="page">
+    <input type="text" id="searchInput" placeholder="🔍 ওষুধ, জেনেরিক বা ব্র্যান্ড দিয়ে সার্চ করুন...">
+    <div class="scroll-x" id="filterCats"></div>
+    <div id="medicinesList"></div>
+    <button id="loadMoreBtn" style="width:100%; background: var(--primary-light); border: none; padding: 12px; border-radius: 40px; margin-top: 10px;">আরও লোড করুন</button>
+</div>
+
+<div id="cart" class="page">
+    <h2>🛒 শপিং ব্যাগ</h2>
+    <div id="cartItems"></div>
+    <div id="cartTotal"></div>
+    <button id="checkoutBtn" class="btn-primary">✅ চেকআউট</button>
+</div>
+
+<div id="checkout" class="page">
+    <h2>📝 অর্ডার নিশ্চিতকরণ</h2>
+    <input type="text" id="customerName" placeholder="আপনার নাম">
+    <input type="tel" id="customerPhone" placeholder="মোবাইল নম্বর">
+    <select id="customerDistrict"><option>ঢাকা</option><option>চট্টগ্রাম</option><option>রাজশাহী</option><option>খুলনা</option><option>বরিশাল</option><option>সিলেট</option><option>রংপুর</option><option>ময়মনসিংহ</option></select>
+    <input type="text" id="customerAddress" placeholder="বিস্তারিত ঠিকানা">
+    <div id="deliveryInfo" class="delivery-box"></div>
+    <button id="placeOrderBtn" class="btn-primary">🚚 অর্ডার কনফার্ম</button>
+</div>
+
+<div id="orders" class="page">
+    <h2>📦 আমার অর্ডারসমূহ</h2>
+    <div id="ordersList"></div>
+</div>
+
+<div id="profile" class="page">
+    <div class="profile-header">
+        <div class="profile-avatar" id="avatarClick"><span id="avatarText">👤</span><img id="avatarImg" style="display:none;"></div>
+        <div class="profile-name" id="profileName">আমার প্রোফাইল</div>
+        <div class="profile-email" id="profileEmail">user@madipaul.com</div>
+        <button id="editProfileBtn" style="margin-top:10px; padding:6px 16px; border-radius:40px; background:none; border:1px solid var(--primary); color:var(--primary);">প্রোফাইল এডিট</button>
+    </div>
+    <div class="menu-item" id="myOrdersMenu"><div>📦 আমার অর্ডার</div><span>→</span></div>
+    <div class="menu-item" id="prescriptionMenu"><div>📄 প্রেসক্রিপশন আপলোড</div><span>→</span></div>
+    <div class="menu-item" id="adManagerMenu"><div>📢 অ্যাড ম্যানেজার</div><span>→</span></div>
+    <div class="menu-item" id="logoutMenu"><div>🚪 লগআউট</div><span>→</span></div>
+    <div id="superAdminSection" style="margin-top:20px; display:none;">
+        <div class="menu-item" id="superAdminBtn" style="background:#ffebee;"><div>⚙️ সুপার অ্যাডমিন প্যানেল</div><span>→</span></div>
+    </div>
+</div>
+
+<!-- অ্যাড ম্যানেজার মডাল (শুধু অ্যাডমিন দেখবে) -->
+<div id="adManagerModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:300; padding:20px;">
+    <div style="background:white; max-width:500px; margin:40px auto; border-radius:32px; padding:24px;">
+        <h3>📢 অ্যাড ম্যানেজমেন্ট</h3>
+        <p>এখান থেকে হোমপেজের অ্যাড ব্যানার কাস্টমাইজ করুন</p>
+        <label>টপ ব্যানার HTML/টেক্সট:</label>
+        <textarea id="adTopHtml" rows="3" style="width:100%; margin-bottom:12px;"></textarea>
+        <label>বটম ব্যানার HTML/টেক্সট:</label>
+        <textarea id="adBottomHtml" rows="3" style="width:100%; margin-bottom:12px;"></textarea>
+        <button id="saveAdsBtn" class="btn-primary">সেভ করুন</button>
+        <button id="closeAdModal" style="background:#ccc; margin-top:10px;">বন্ধ করুন</button>
+    </div>
+</div>
+
+<!-- প্রেসক্রিপশন মডাল -->
+<div id="prescriptionModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:300; padding:20px;">
+    <div style="background:white; max-width:500px; margin:40px auto; border-radius:32px; padding:24px;">
+        <h3>📄 প্রেসক্রিপশন আপলোড</h3>
+        <div style="border:2px dashed var(--border); border-radius:20px; padding:30px; text-align:center; cursor:pointer; margin-bottom:16px;" id="prescriptionUploadArea">📸 ছবি আপলোড করুন<input type="file" id="prescriptionFile" accept="image/*" style="display:none;"></div>
+        <div id="prescriptionList"></div>
+        <button id="closePrescBtn" style="background:#ccc; padding:10px; border:none; border-radius:30px;">বন্ধ করুন</button>
+    </div>
+</div>
+
+<!-- প্রোফাইল এডিট মডাল -->
+<div id="editProfileModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:300; padding:20px;">
+    <div style="background:white; max-width:500px; margin:40px auto; border-radius:32px; padding:24px;">
+        <h3>✏️ প্রোফাইল এডিট</h3>
+        <input type="text" id="editName" placeholder="নাম">
+        <input type="email" id="editEmail" placeholder="ইমেইল">
+        <input type="tel" id="editPhone" placeholder="মোবাইল">
+        <button id="saveProfileBtn" class="btn-primary">সংরক্ষণ করুন</button>
+        <button id="closeEditBtn" style="margin-top:10px; background:#ccc;">বন্ধ করুন</button>
+    </div>
+</div>
+
+<!-- সুপার অ্যাডমিন প্যানেল -->
+<div id="superAdminPanel" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); z-index:1000; overflow-y:auto; padding:20px;">
+    <div style="background:white; max-width:600px; margin:20px auto; border-radius:36px; padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>⚙️ সুপার অ্যাডমিন কন্ট্রোল</h2>
+            <button id="closeSuperAdmin" style="background:#f44336; padding:8px 16px; border:none; border-radius:30px; color:white;">✖️ বন্ধ</button>
+        </div>
+        <p style="color:green; margin:10px 0;">✅ এখান থেকে অ্যাপের সবকিছু কন্ট্রোল করুন</p>
+        <hr>
+        <h3>👥 ইউজার ম্যানেজমেন্ট</h3>
+        <div id="adminUserList" style="max-height:200px; overflow-y:auto; border:1px solid var(--border); border-radius:16px; padding:8px; margin-bottom:16px;"></div>
+        <h3>💊 ওষুধ ম্যানেজমেন্ট (ছবি সহ)</h3>
+        <div id="adminMedicineList" style="max-height:250px; overflow-y:auto; border:1px solid var(--border); border-radius:16px; padding:8px; margin-bottom:16px;"></div>
+        <h4>➕ নতুন ওষুধ যোগ করুন</h4>
+        <input type="text" id="adminNewMed" placeholder="ওষুধের নাম">
+        <input type="text" id="adminNewGeneric" placeholder="জেনেরিক নাম">
+        <input type="text" id="adminNewBrand" placeholder="ব্র্যান্ড">
+        <input type="number" id="adminNewPrice" placeholder="মূল মূল্য">
+        <select id="adminNewCat"></select>
+        <label><input type="checkbox" id="adminNewRx"> প্রেসক্রিপশন প্রয়োজন</label>
+        <label><input type="checkbox" id="adminNewEssential"> অত্যাবশ্যকীয়</label>
+        <div style="margin:10px 0;">
+            <label>ওষুধের ছবি: </label>
+            <input type="file" id="adminNewImage" accept="image/*">
+            <div id="imagePreview" style="width:60px; height:60px; background:#eee; border-radius:12px; margin-top:5px;"></div>
+        </div>
+        <button id="adminAddMedBtn">যোগ করুন</button>
+        <h3>📦 সকল অর্ডার</h3>
+        <div id="adminAllOrders" style="max-height:200px; overflow-y:auto; border:1px solid var(--border); border-radius:16px; padding:8px; margin-top:10px;"></div>
+        <button id="exportDataBtn" style="background:#2196f3; margin-top:16px;">📥 সম্পূর্ণ ডাটা এক্সপোর্ট</button>
+        <input type="file" id="importDataFile" accept=".json" style="margin-top:10px;">
+        <button id="importDataBtn" style="background:#ff9800;">📤 ইম্পোর্ট ডাটা</button>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <button class="nav-btn" data-page="home"><span class="nav-icon">🏠</span> হোম</button>
+    <button class="nav-btn" data-page="medicines"><span class="nav-icon">💊</span> সব</button>
+    <button class="nav-btn" data-page="cart"><span class="nav-icon">🛒</span> কার্ট</button>
+    <button class="nav-btn" data-page="orders"><span class="nav-icon">📦</span> অর্ডার</button>
+    <button class="nav-btn" data-page="profile"><span class="nav-icon">👤</span> প্রোফাইল</button>
+</div>
+
+<script>
+    // ===================== কনফিগারেশন =====================
+    const DISCOUNT = 10;
+    function applyDiscount(p) { return Math.floor(p * (100 - DISCOUNT) / 100); }
+
+    const CATEGORIES = [
+        "ট্যাবলেট", "ক্যাপসুল", "সিরাপ", "ইনজেকশন", "ভিটামিন", "ক্রিম/মলম", 
+        "ইনহেলার", "ড্রপস", "অ্যান্টিবায়োটিক", "অ্যান্টিহিস্টামিন", "হারবাল", 
+        "চক্ষুর ওষুধ", "কার্ডিয়াক", "ডায়াবেটিস"
+    ];
+
+    // গ্লোবাল ডাটা
+    let medicines = [];
+    let cart = [];
+    let orders = [];
+    let users = [];
+    let currentUser = null;
+    let prescriptions = [];
+    let currentPage = 0;
+    const PER_PAGE = 15;
+    let activeCat = "সব";
+    let searchTerm = "";
+
+    // অ্যাড কন্টেন্ট (লোকাল স্টোরেজে রাখা)
+    let adContents = JSON.parse(localStorage.getItem("madipaul_ads")) || {
+        top: "📢 আপনার বিজ্ঞাপন এখানে দিন | যোগাযোগ: madipaul@example.com",
+        bottom: "📢 স্পনসরড কন্টেন্ট | আপনার ব্র্যান্ড এখানে"
+    };
+
+    function updateAdBanners() {
+        let topDiv = document.getElementById("adBannerTop");
+        let bottomDiv = document.getElementById("adBannerBottom");
+        if (topDiv) topDiv.innerHTML = adContents.top;
+        if (bottomDiv) bottomDiv.innerHTML = adContents.bottom;
+    }
+
+    // ওষুধ জেনারেট/লোড
+    function loadMedicines() {
+        let saved = localStorage.getItem("madipaul_medicines_full_v3");
+        if (saved && JSON.parse(saved).length > 10) {
+            medicines = JSON.parse(saved);
+        } else {
+            const defaultMeds = [
+                { id:1, name:"Napa", generic:"Paracetamol", brand:"Square Pharma", originalPrice:8, category:"ট্যাবলেট", rx:false, essential:true, popular:true, image:"📷" },
+                { id:2, name:"Ace", generic:"Paracetamol", brand:"ACI Limited", originalPrice:9, category:"ট্যাবলেট", rx:false, essential:true, popular:true, image:"📷" },
+                { id:3, name:"Ciprocin", generic:"Ciprofloxacin", brand:"Beximco Pharma", originalPrice:15, category:"অ্যান্টিবায়োটিক", rx:true, essential:true, popular:true, image:"📷" },
+                { id:4, name:"Azithromycin", generic:"Azithromycin", brand:"Renata Limited", originalPrice:48, category:"অ্যান্টিবায়োটিক", rx:true, essential:true, popular:true, image:"📷" },
+                { id:5, name:"Insulin", generic:"Human Insulin", brand:"Novo Nordisk", originalPrice:380, category:"ডায়াবেটিস", rx:true, essential:true, popular:true, image:"📷" },
+                { id:6, name:"Ventolin", generic:"Salbutamol", brand:"GSK", originalPrice:290, category:"ইনহেলার", rx:true, essential:true, popular:true, image:"📷" },
+                { id:7, name:"Seclo", generic:"Omeprazole", brand:"Healthcare Pharma", originalPrice:10, category:"ক্যাপসুল", rx:false, essential:true, popular:true, image:"📷" },
+                { id:8, name:"Fexo", generic:"Fexofenadine", brand:"Square Pharma", originalPrice:22, category:"অ্যান্টিহিস্টামিন", rx:false, essential:false, popular:true, image:"📷" },
+                { id:9, name:"Metformin", generic:"Metformin HCl", brand:"Beximco Pharma", originalPrice:5, category:"ডায়াবেটিস", rx:true, essential:true, popular:true, image:"📷" },
+                { id:10, name:"Losartan", generic:"Losartan Potassium", brand:"Renata Limited", originalPrice:14, category:"কার্ডিয়াক", rx:true, essential:true, popular:true, image:"📷" }
+            ];
+            medicines = defaultMeds.map(m => ({...m, price: applyDiscount(m.originalPrice), discount: DISCOUNT, stock:100}));
+            // আরও ৫০টি ডেমো
+            for(let i=11;i<=60;i++) {
+                let cat = CATEGORIES[i%CATEGORIES.length];
+                let price = Math.floor(Math.random()*200)+10;
+                medicines.push({ id:i, name:`Med ${i}`, generic:"জেনেরিক", brand:["Square","Beximco","Incepta"][i%3], originalPrice:price, price:applyDiscount(price), discount:DISCOUNT, category:cat, rx:Math.random()>0.7, essential:price<30, popular:false, stock:100, image:"📷" });
+            }
+            localStorage.setItem("madipaul_medicines_full_v3", JSON.stringify(medicines));
+        }
+    }
+
+    function loadUsers() {
+        let saved = localStorage.getItem("madipaul_users_v3");
+        if (saved) users = JSON.parse(saved);
+        else {
+            users = [
+                { id:1, name:"সুপার অ্যাডমিন", email:"admin@madipaul.com", password:"admin123", role:"super_admin", avatar:"" },
+                { id:2, name:"ডেমো ইউজার", email:"demo@madipaul.com", password:"123456", role:"user", avatar:"" }
+            ];
+            localStorage.setItem("madipaul_users_v3", JSON.stringify(users));
+        }
+    }
+
+    function saveAll() {
+        localStorage.setItem("madipaul_medicines_full_v3", JSON.stringify(medicines));
+        localStorage.setItem("madipaul_cart_v3", JSON.stringify(cart));
+        localStorage.setItem("madipaul_orders_v3", JSON.stringify(orders));
+        localStorage.setItem("madipaul_users_v3", JSON.stringify(users));
+        localStorage.setItem("madipaul_current_user_v3", JSON.stringify(currentUser));
+        localStorage.setItem("madipaul_prescriptions_v3", JSON.stringify(prescriptions));
+        localStorage.setItem("madipaul_ads", JSON.stringify(adContents));
+        updateStats();
+        updateAdBanners();
+    }
+
+    function updateStats() {
+        let uniqueGenerics = new Set(medicines.map(m=>m.generic)).size;
+        let uniqueBrands = new Set(medicines.map(m=>m.brand)).size;
+        let uniqueCats = new Set(medicines.map(m=>m.category)).size;
+        document.getElementById("statTotal").innerText = medicines.length;
+        document.getElementById("statGeneric").innerText = uniqueGenerics;
+        document.getElementById("statBrand").innerText = uniqueBrands;
+        document.getElementById("statCat").innerText = uniqueCats;
+    }
+
+    function medicineCard(m) {
+        let badges = [];
+        if(m.rx) badges.push(`<span class="rx-badge">📄 প্রেসক্রিপশন প্রয়োজন</span>`);
+        if(m.essential) badges.push(`<span class="essential-badge">⭐ অত্যাবশ্যকীয়</span>`);
+        let savings = m.originalPrice - m.price;
+        let imgHtml = (m.image && m.image.startsWith('data:')) ? `<img src="${m.image}">` : `<span>${m.image || '📷'}</span>`;
+        return `<div class="medicine-card">
+            <div class="discount-tag">-${DISCOUNT}%</div>
+            <div class="medicine-img">${imgHtml}</div>
+            <div class="med-info">
+                <h4>${m.name}</h4>
+                <div class="med-detail">${m.generic} | ${m.brand}</div>
+                <div class="badge-group">${badges.join('')}</div>
+            </div>
+            <div class="price-section">
+                <div class="original-price">৳${m.originalPrice}</div>
+                <div class="discount-price">৳${m.price}</div>
+                <div class="save-amount">সাশ্রয় ৳${savings}</div>
+                <button class="add-btn" data-id="${m.id}">কার্টে +</button>
+            </div>
+        </div>`;
+    }
+
+    function renderHome() {
+        let cats = ["সব", ...CATEGORIES];
+        document.getElementById("homeCats").innerHTML = cats.slice(0,12).map(c=>`<div class="cat-chip" data-cat="${c}">${c}</div>`).join('');
+        let popular = medicines.filter(m=>m.popular).slice(0,8);
+        document.getElementById("popularGrid").innerHTML = popular.map(m=>medicineCard(m)).join('');
+        attachEvents();
+    }
+
+    function renderMedicines() {
+        let filtered = medicines.filter(m=>(activeCat==="সব" || m.category===activeCat) && 
+            (m.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+             m.generic.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             m.brand.toLowerCase().includes(searchTerm.toLowerCase())));
+        let start = currentPage * PER_PAGE;
+        let pageItems = filtered.slice(start, start+PER_PAGE);
+        document.getElementById("medicinesList").innerHTML = pageItems.map(m=>medicineCard(m)).join('');
+        attachEvents();
+        let loadBtn = document.getElementById("loadMoreBtn");
+        if(loadBtn) loadBtn.style.display = (start+PER_PAGE >= filtered.length) ? "none" : "block";
+    }
+
+    function renderCart() {
+        if(cart.length===0) {
+            document.getElementById("cartItems").innerHTML = "<div style='padding:40px; text-align:center'>🛒 কার্ট খালি</div>";
+            document.getElementById("cartTotal").innerHTML = "";
+            return;
+        }
+        let subtotal=0, originalTotal=0, html="";
+        for(let item of cart) {
+            let med = medicines.find(m=>m.id===item.id);
+            if(med) {
+                originalTotal += med.originalPrice * item.qty;
+                subtotal += med.price * item.qty;
+                html += `<div class="cart-item"><div><strong>${med.name}</strong><br>৳${med.price} x ${item.qty}</div>
+                    <div><button class="qty-minus" data-id="${item.id}">-</button><span>${item.qty}</span>
+                    <button class="qty-plus" data-id="${item.id}">+</button><button class="qty-remove" data-id="${item.id}">🗑️</button></div></div>`;
+            }
+        }
+        let savings = originalTotal - subtotal;
+        let delivery = 60;
+        let total = subtotal + delivery;
+        document.getElementById("cartItems").innerHTML = html;
+        document.getElementById("cartTotal").innerHTML = `<div class="delivery-box">
+            <strong>মূল্য: ৳${originalTotal}</strong><br>
+            <span style="color:var(--discount);">🎉 ছাড় (${DISCOUNT}%): -৳${savings}</span><br>
+            <strong>ছাড়ের পর: ৳${subtotal}</strong><br>
+            🚚 ডেলিভারি: ৳${delivery}<br>
+            <h3>পরিশোধযোগ্য: ৳${total}</h3>
+        </div>`;
+        attachCartEvents();
+    }
+
+    function attachCartEvents() {
+        document.querySelectorAll(".qty-minus, .qty-plus, .qty-remove").forEach(btn=>{
+            btn.addEventListener("click",()=>{
+                let id=parseInt(btn.dataset.id), idx=cart.findIndex(i=>i.id===id);
+                if(idx!==-1) {
+                    if(btn.classList.contains("qty-minus")) { if(cart[idx].qty>1) cart[idx].qty--; else cart.splice(idx,1); }
+                    else if(btn.classList.contains("qty-plus")) cart[idx].qty++;
+                    else cart.splice(idx,1);
+                    saveAll(); renderCart();
+                }
+            });
+        });
+    }
+
+    function attachEvents() {
+        document.querySelectorAll(".add-btn").forEach(btn=>{
+            btn.addEventListener("click",()=>{
+                if(!currentUser) { showToast("লগইন করুন"); return; }
+                let id=parseInt(btn.dataset.id), exist=cart.find(i=>i.id===id);
+                if(exist) exist.qty++; else cart.push({id, qty:1});
+                saveAll(); renderCart(); showToast("✓ কার্টে যোগ হয়েছে");
+            });
+        });
+    }
+
+    function renderOrders() {
+        let userOrders = orders.filter(o=>o.userEmail===currentUser?.email);
+        if(userOrders.length===0) { document.getElementById("ordersList").innerHTML = "<div style='padding:40px;text-align:center'>কোনো অর্ডার নেই</div>"; return; }
+        document.getElementById("ordersList").innerHTML = userOrders.map((ord,idx)=>`<div class="order-card"><strong>অর্ডার #${idx+1}</strong> <span style="background:#fff8e1;padding:2px12px;border-radius:40px;">${ord.status}</span><br>📅 ${ord.date}<br>💰 মোট: ৳${ord.total}<br><small>🎉 ${DISCOUNT}% ছাড় সহ</small></div>`).join('');
+    }
+
+    function updateProfileUI() {
+        if(currentUser) {
+            document.getElementById("profileName").innerText = currentUser.name;
+            document.getElementById("profileEmail").innerText = currentUser.email;
+            if(currentUser.avatar) {
+                document.getElementById("avatarImg").src = currentUser.avatar;
+                document.getElementById("avatarImg").style.display = "block";
+                document.getElementById("avatarText").style.display = "none";
+            } else {
+                document.getElementById("avatarImg").style.display = "none";
+                document.getElementById("avatarText").style.display = "block";
+            }
+            if(currentUser.role === "super_admin") document.getElementById("superAdminSection").style.display = "block";
+            else document.getElementById("superAdminSection").style.display = "none";
+        }
+    }
+
+    function showToast(msg) {
+        let t=document.createElement("div");
+        t.style.cssText="position:fixed; bottom:100px; left:16px; right:16px; background:#1a2e1a; color:white; padding:10px; border-radius:60px; text-align:center; z-index:200; font-size:13px;";
+        t.innerText=msg;
+        document.body.appendChild(t);
+        setTimeout(()=>t.remove(),2500);
+    }
+
+    function switchPage(pageId) {
+        document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+        document.getElementById(pageId).classList.add("active");
+        if(pageId==="home") renderHome();
+        if(pageId==="medicines") { currentPage=0; updateCategoryFilters(); renderMedicines(); }
+        if(pageId==="cart") renderCart();
+        if(pageId==="orders") renderOrders();
+    }
+
+    function updateCategoryFilters() {
+        let cats = ["সব", ...CATEGORIES];
+        document.getElementById("filterCats").innerHTML = cats.map(c=>`<div class="cat-chip ${activeCat===c?'active':''}" data-filter="${c}">${c}</div>`).join('');
+        document.querySelectorAll("#filterCats .cat-chip").forEach(chip=>{
+            chip.addEventListener("click",function(){
+                activeCat=this.dataset.filter;
+                currentPage=0;
+                renderMedicines();
+                document.querySelectorAll("#filterCats .cat-chip").forEach(c=>c.classList.remove("active"));
+                this.classList.add("active");
+            });
+        });
+    }
+
+    // AI হেল্প সেন্টার
+    const aiResponses = {
+        "ওষুধের দাম": "সব ওষুধের উপর ১০% ছাড় রয়েছে! প্রতিটি ওষুধের কার্ডে মূল্য দেখুন।",
+        "ডেলিভারি চার্জ": "ঢাকায় ৬০ টাকা, ঢাকার বাইরে ১২০ টাকা। ৫০০+ টাকার অর্ডারে ফ্রি ডেলিভারি!",
+        "ডিসকাউন্ট": "🎉 Madipaul Pro তে সব প্রোডাক্টের উপর ১০% ছাড় চলছে! স্বয়ংক্রিয়ভাবে ছাড় পাবেন।",
+        "অর্ডার পদ্ধতি": "ওষুধ সার্চ করুন → কার্টে যোগ করুন → চেকআউট করুন → ঠিকানা দিন → অর্ডার কনফার্ম করুন!"
+    };
+    function getAIResponse(q) {
+        if(q.includes("দাম")||q.includes("মূল্য")) return aiResponses["ওষুধের দাম"];
+        if(q.includes("ডেলিভারি")) return aiResponses["ডেলিভারি চার্জ"];
+        if(q.includes("ছাড়")||q.includes("ডিসকাউন্ট")) return aiResponses["ডিসকাউন্ট"];
+        if(q.includes("অর্ডার")) return aiResponses["অর্ডার পদ্ধতি"];
+        return "আমি সাহায্য করতে প্রস্তুত! আপনি কি জানতে চান: ওষুধের দাম, ডেলিভারি চার্জ, নাকি অর্ডার পদ্ধতি?";
+    }
+    function addMessage(text, isUser) {
+        let container = document.getElementById("helpMessages");
+        let msgDiv = document.createElement("div");
+        msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+        msgDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+        container.appendChild(msgDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+    function sendHelpMessage() {
+        let input = document.getElementById("helpInput");
+        let q = input.value.trim();
+        if(!q) return;
+        addMessage(q, true);
+        input.value = "";
+        setTimeout(()=>addMessage(getAIResponse(q), false), 300);
+    }
+
+    // সুপার অ্যাডমিন ফাংশন
+    function renderAdminPanel() {
+        let userListDiv = document.getElementById("adminUserList");
+        if(userListDiv) {
+            userListDiv.innerHTML = users.map(u=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #ddd;"><span>${u.name} (${u.email}) - ${u.role}</span><button onclick="deleteUser('${u.email}')" style="background:#f44336;padding:2px10px;border:none;border-radius:20px;">ডিলিট</button></div>`).join('');
+        }
+        let medListDiv = document.getElementById("adminMedicineList");
+        if(medListDiv) {
+            medListDiv.innerHTML = medicines.map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #ddd;"><div><strong>${m.name}</strong> (৳${m.price})<br><small>${m.generic} | ${m.brand}</small></div><div><button onclick="editMedicineImage(${m.id})" style="background:#2196f3;padding:2px10px;">ছবি বদলান</button> <button onclick="deleteMedicine(${m.id})" style="background:#f44336;padding:2px10px;">ডিলিট</button></div></div>`).join('');
+        }
+        let catSelect = document.getElementById("adminNewCat");
+        if(catSelect) catSelect.innerHTML = CATEGORIES.map(c=>`<option>${c}</option>`).join('');
+        let allOrdersDiv = document.getElementById("adminAllOrders");
+        if(allOrdersDiv) allOrdersDiv.innerHTML = orders.map(o=>`<div style="padding:6px;border-bottom:1px solid #ddd;">${o.name} - ${o.phone} - ৳${o.total} - ${o.status}</div>`).join('');
+    }
+
+    window.deleteUser = function(email) {
+        if(confirm("ইউজার ডিলিট করবেন?")) { users=users.filter(u=>u.email!==email); saveAll(); renderAdminPanel(); showToast("ইউজার ডিলিট হয়েছে"); }
+    };
+    window.deleteMedicine = function(id) {
+        if(confirm("ওষুধ ডিলিট করবেন?")) { medicines=medicines.filter(m=>m.id!==id); saveAll(); renderAdminPanel(); renderMedicines(); renderHome(); showToast("ওষুধ ডিলিট হয়েছে"); }
+    };
+    window.editMedicineImage = function(id) {
+        let med = medicines.find(m=>m.id===id);
+        if(!med) return;
+        let input = document.createElement("input");
+        input.type="file"; input.accept="image/*";
+        input.onchange=(e)=>{
+            let file=e.target.files[0];
+            let reader=new FileReader();
+            reader.onload=(ev)=>{ med.image=ev.target.result; saveAll(); renderAdminPanel(); renderMedicines(); renderHome(); showToast("ছবি আপডেট হয়েছে"); };
+            reader.readAsDataURL(file);
+        };
+        input.click();
+    };
+
+    // ইভেন্ট লিসেনার
+    document.getElementById("searchInput")?.addEventListener("input",(e)=>{ searchTerm=e.target.value; currentPage=0; renderMedicines(); });
+    document.getElementById("loadMoreBtn")?.addEventListener("click",()=>{ currentPage++; renderMedicines(); });
+    document.getElementById("checkoutBtn")?.addEventListener("click",()=>{ if(cart.length) switchPage("checkout"); else showToast("কার্ট খালি"); });
+    document.getElementById("placeOrderBtn")?.addEventListener("click",()=>{
+        if(!currentUser) { showToast("লগইন করুন"); return; }
+        let name=document.getElementById("customerName").value, phone=document.getElementById("customerPhone").value, district=document.getElementById("customerDistrict").value, address=document.getElementById("customerAddress").value;
+        if(!name||!phone||!address) { showToast("সব তথ্য দিন"); return; }
+        let subtotal = cart.reduce((s,it)=>{ let m=medicines.find(x=>x.id===it.id); return s+(m?m.price*it.qty:0); },0);
+        let delivery = district==="ঢাকা"?60:120;
+        let total = subtotal+delivery;
+        orders.unshift({ id:Date.now(), name, phone, district, address, total, status:"প্রক্রিয়াধীন", date:new Date().toLocaleString(), userEmail:currentUser.email });
+        cart = []; saveAll(); renderCart(); renderOrders(); showToast("অর্ডার কনফার্ম!"); switchPage("orders");
+    });
+    document.getElementById("myOrdersMenu")?.addEventListener("click",()=>switchPage("orders"));
+    document.getElementById("logoutMenu")?.addEventListener("click",()=>{ currentUser=null; localStorage.removeItem("madipaul_current_user_v3"); updateProfileUI(); showToast("লগআউট সফল!"); switchPage("home"); });
+    document.getElementById("editProfileBtn")?.addEventListener("click",()=>{ document.getElementById("editProfileModal").style.display="flex"; document.getElementById("editName").value=currentUser?.name||""; document.getElementById("editEmail").value=currentUser?.email||""; document.getElementById("editPhone").value=currentUser?.phone||""; });
+    document.getElementById("saveProfileBtn")?.addEventListener("click",()=>{ if(currentUser) { currentUser.name=document.getElementById("editName").value; currentUser.email=document.getElementById("editEmail").value; currentUser.phone=document.getElementById("editPhone").value; saveAll(); updateProfileUI(); showToast("প্রোফাইল আপডেট!"); document.getElementById("editProfileModal").style.display="none"; } });
+    document.getElementById("closeEditBtn")?.addEventListener("click",()=>{ document.getElementById("editProfileModal").style.display="none"; });
+    document.getElementById("prescriptionMenu")?.addEventListener("click",()=>{ document.getElementById("prescriptionModal").style.display="flex"; renderPrescriptions(); });
+    document.getElementById("closePrescBtn")?.addEventListener("click",()=>{ document.getElementById("prescriptionModal").style.display="none"; });
+    document.getElementById("avatarClick")?.addEventListener("click",()=>{
+        let input=document.createElement("input");
+        input.type="file"; input.accept="image/*";
+        input.onchange=(e)=>{
+            let file=e.target.files[0];
+            let reader=new FileReader();
+            reader.onload=(ev)=>{ if(currentUser) { currentUser.avatar=ev.target.result; saveAll(); updateProfileUI(); } };
+            reader.readAsDataURL(file);
+        };
+        input.click();
+    });
+    function renderPrescriptions() {
+        let container=document.getElementById("prescriptionList");
+        if(container) container.innerHTML=prescriptions.map((p,i)=>`<div class="delivery-box"><img src="${p.image}" style="max-width:100%;border-radius:12px;"><button onclick="deletePresc(${i})" style="background:#f44336;margin-top:8px;">ডিলিট</button></div>`).join('');
+    }
+    window.deletePresc=function(i){ prescriptions.splice(i,1); localStorage.setItem("madipaul_prescriptions_v3",JSON.stringify(prescriptions)); renderPrescriptions(); };
+    document.getElementById("prescriptionUploadArea")?.addEventListener("click",()=>{ document.getElementById("prescriptionFile").click(); });
+    document.getElementById("prescriptionFile")?.addEventListener("change",(e)=>{
+        let file=e.target.files[0];
+        let reader=new FileReader();
+        reader.onload=(ev)=>{ prescriptions.push({ image:ev.target.result, date:new Date().toLocaleString() }); localStorage.setItem("madipaul_prescriptions_v3",JSON.stringify(prescriptions)); renderPrescriptions(); showToast("প্রেসক্রিপশন আপলোড হয়েছে"); };
+        reader.readAsDataURL(file);
+    });
+    document.getElementById("superAdminBtn")?.addEventListener("click",()=>{
+        if(currentUser?.role==="super_admin") { document.getElementById("superAdminPanel").style.display="flex"; renderAdminPanel(); }
+        else showToast("শুধুমাত্র অ্যাডমিন দেখতে পারবেন");
+    });
+    document.getElementById("closeSuperAdmin")?.addEventListener("click",()=>{ document.getElementById("superAdminPanel").style.display="none"; });
+    document.getElementById("adminAddMedBtn")?.addEventListener("click",()=>{
+        let name=document.getElementById("adminNewMed").value;
+        let generic=document.getElementById("adminNewGeneric").value;
+        let brand=document.getElementById("adminNewBrand").value;
+        let originalPrice=parseFloat(document.getElementById("adminNewPrice").value);
+        let cat=document.getElementById("adminNewCat").value;
+        let rx=document.getElementById("adminNewRx").checked;
+        let essential=document.getElementById("adminNewEssential").checked;
+        let imageFile=document.getElementById("adminNewImage").files[0];
+        if(!name||!originalPrice) { showToast("নাম ও দাম দিন"); return; }
+        let newId=Date.now();
+        let newMed={ id:newId, name, generic:generic||"জেনেরিক", brand:brand||"Madipaul", originalPrice, price:applyDiscount(originalPrice), discount:DISCOUNT, category:cat, rx, essential, popular:false, stock:100, image:"📷" };
+        if(imageFile) {
+            let reader=new FileReader();
+            reader.onload=(ev)=>{ newMed.image=ev.target.result; medicines.push(newMed); saveAll(); renderAdminPanel(); renderMedicines(); renderHome(); showToast("ওষুধ যোগ হয়েছে (ছবি সহ)"); };
+            reader.readAsDataURL(imageFile);
+        } else {
+            medicines.push(newMed);
+            saveAll(); renderAdminPanel(); renderMedicines(); renderHome(); showToast("ওষুধ যোগ হয়েছে");
+        }
+    });
+    document.getElementById("exportDataBtn")?.addEventListener("click",()=>{
+        let exportData={ medicines, users, orders, prescriptions };
+        let dataStr=JSON.stringify(exportData,null,2);
+        let blob=new Blob([dataStr],{type:"application/json"});
+        let url=URL.createObjectURL(blob);
+        let a=document.createElement("a");
+        a.href=url;
+        a.download=`madipaul_full_backup_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("ডাটা এক্সপোর্ট হয়েছে");
+    });
+    document.getElementById("importDataBtn")?.addEventListener("click",()=>{
+        let file=document.getElementById("importDataFile").files[0];
+        if(!file) { showToast("JSON ফাইল নির্বাচন করুন"); return; }
+        let reader=new FileReader();
+        reader.onload=(e)=>{
+            try {
+                let imported=JSON.parse(e.target.result);
+                if(imported.medicines) medicines=imported.medicines;
+                if(imported.users) users=imported.users;
+                if(imported.orders) orders=imported.orders;
+                if(imported.prescriptions) prescriptions=imported.prescriptions;
+                saveAll();
+                renderAdminPanel();
+                renderMedicines();
+                renderHome();
+                showToast("ডাটা ইম্পোর্ট হয়েছে");
+            } catch(err) { showToast("ফাইল ঠিক নেই"); }
+        };
+        reader.readAsText(file);
+    });
+    document.getElementById("customerDistrict")?.addEventListener("change",(e)=>{
+        let fee=e.target.value==="ঢাকা"?60:120;
+        document.getElementById("deliveryInfo").innerHTML = `🚚 ডেলিভারি চার্জ: ৳${fee}<br>🎉 ৫০০+ টাকায় ফ্রি ডেলিভারি!`;
+    });
+
+    // অ্যাড ম্যানেজার
+    document.getElementById("adManagerMenu")?.addEventListener("click",()=>{
+        if(currentUser?.role==="super_admin") {
+            document.getElementById("adManagerModal").style.display="flex";
+            document.getElementById("adTopHtml").value = adContents.top;
+            document.getElementById("adBottomHtml").value = adContents.bottom;
+        } else showToast("শুধুমাত্র অ্যাডমিন");
+    });
+    document.getElementById("saveAdsBtn")?.addEventListener("click",()=>{
+        adContents.top = document.getElementById("adTopHtml").value;
+        adContents.bottom = document.getElementById("adBottomHtml").value;
+        localStorage.setItem("madipaul_ads", JSON.stringify(adContents));
+        updateAdBanners();
+        document.getElementById("adManagerModal").style.display="none";
+        showToast("অ্যাড আপডেট হয়েছে");
+    });
+    document.getElementById("closeAdModal")?.addEventListener("click",()=>{ document.getElementById("adManagerModal").style.display="none"; });
+
+    // হেল্প চ্যাট ইভেন্ট
+    document.getElementById("helpFab")?.addEventListener("click",()=>{ let chat=document.getElementById("helpChat"); chat.style.display=chat.style.display==="flex"?"none":"flex"; });
+    document.getElementById("closeHelp")?.addEventListener("click",()=>{ document.getElementById("helpChat").style.display="none"; });
+    document.getElementById("helpSend")?.addEventListener("click",sendHelpMessage);
+    document.getElementById("helpInput")?.addEventListener("keypress",(e)=>{ if(e.key==="Enter") sendHelpMessage(); });
+    document.querySelectorAll(".quick-reply").forEach(btn=>{
+        btn.addEventListener("click",()=>{ let q=btn.dataset.question; addMessage(q,true); setTimeout(()=>addMessage(getAIResponse(q),false),300); });
+    });
+    document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchPage(btn.dataset.page)));
+
+    // লগইন মডাল
+    function showLoginModal() {
+        let modal=document.createElement("div");
+        modal.style.cssText="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:center; justify-content:center;";
+        modal.innerHTML=`<div style="background:white; max-width:350px; width:90%; border-radius:32px; padding:24px;">
+            <div style="display:flex; gap:12px; margin-bottom:20px;"><button id="loginTabBtn" style="flex:1; padding:10px; background:var(--primary); color:white; border:none; border-radius:30px;">লগইন</button><button id="signupTabBtn" style="flex:1; padding:10px; background:#eee; border:none; border-radius:30px;">সাইন আপ</button></div>
+            <div id="loginFormDiv"><input type="email" id="loginEmail" placeholder="ইমেইল"><input type="password" id="loginPass" placeholder="পাসওয়ার্ড"><div id="loginError" style="color:red;"></div><button id="doLoginModalBtn" class="btn-primary">লগইন</button></div>
+            <div id="signupFormDiv" style="display:none;"><input type="text" id="signupName" placeholder="নাম"><input type="email" id="signupEmail" placeholder="ইমেইল"><input type="password" id="signupPass" placeholder="পাসওয়ার্ড"><div id="signupError" style="color:red;"></div><button id="doSignupModalBtn" class="btn-primary">সাইন আপ</button></div>
+            <button id="closeLoginModal" style="margin-top:16px; background:#ccc; width:100%; padding:10px; border:none; border-radius:30px;">বন্ধ</button>
+        </div>`;
+        document.body.appendChild(modal);
+        document.getElementById("loginTabBtn")?.addEventListener("click",()=>{ document.getElementById("loginFormDiv").style.display="block"; document.getElementById("signupFormDiv").style.display="none"; });
+        document.getElementById("signupTabBtn")?.addEventListener("click",()=>{ document.getElementById("loginFormDiv").style.display="none"; document.getElementById("signupFormDiv").style.display="block"; });
+        document.getElementById("doLoginModalBtn")?.addEventListener("click",()=>{
+            let email=document.getElementById("loginEmail").value, pass=document.getElementById("loginPass").value;
+            let user=users.find(u=>u.email===email && u.password===pass);
+            if(user) { currentUser=user; saveAll(); updateProfileUI(); modal.remove(); showToast(`স্বাগতম ${user.name}!`); switchPage("home"); }
+            else document.getElementById("loginError").innerText="ভুল তথ্য";
+        });
+        document.getElementById("doSignupModalBtn")?.addEventListener("click",()=>{
+            let name=document.getElementById("signupName").value, email=document.getElementById("signupEmail").value, pass=document.getElementById("signupPass").value;
+            if(!name||!email||!pass) { document.getElementById("signupError").innerText="সব তথ্য দিন"; return; }
+            if(users.find(u=>u.email===email)) { document.getElementById("signupError").innerText="ইমেইল already exists"; return; }
+            let newUser={ id:Date.now(), name, email, password:pass, role:"user", avatar:"" };
+            users.push(newUser); saveAll(); currentUser=newUser; updateProfileUI(); modal.remove(); showToast(`স্বাগতম ${name}!`); switchPage("home");
+        });
+        document.getElementById("closeLoginModal")?.addEventListener("click",()=>modal.remove());
+    }
+
+    // ইনিশিয়াল লোড
+    loadMedicines();
+    loadUsers();
+    cart = JSON.parse(localStorage.getItem("madipaul_cart_v3")) || [];
+    orders = JSON.parse(localStorage.getItem("madipaul_orders_v3")) || [];
+    prescriptions = JSON.parse(localStorage.getItem("madipaul_prescriptions_v3")) || [];
+    currentUser = JSON.parse(localStorage.getItem("madipaul_current_user_v3"));
+    if(!currentUser) setTimeout(showLoginModal, 500);
+    updateProfileUI();
+    renderHome(); renderCart(); renderOrders();
+    switchPage("home");
+    updateStats();
+    updateAdBanners();
+</script>
+</body>
+</html>
